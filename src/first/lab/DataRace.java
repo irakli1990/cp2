@@ -1,4 +1,6 @@
-package first;
+package first.lab;
+
+
 
 class Counter {
     static final int Iter = 1_000;  // Read-only, just for testing purposes
@@ -28,7 +30,7 @@ class Worker implements Runnable {
 // Main class of the application:
 public class DataRace {
     public static void main(String [] args) throws InterruptedException {
-        Counter counter = new Counter();  // Single counter
+        Counter counter = new Counter();
 
         Thread [] threads = new Thread[10];
         for (int i = 0; i < threads.length; ++i) {
