@@ -40,17 +40,22 @@ class Bank {
     }
 
     public boolean transfer(int fromAccount, int toAccount, int amount) {
-        if (fromAccount < amount) {
-            for (Lock lock : locks) {
+        if ((this.getBalance(fromAccount) > amount)) {
+            for (Lock lock :
+                    locks) {
                 if (lock.tryLock()) {
-                    toAccount += amount;
+                    balances[fromAccount] = this.getBalance(fromAccount) - amount;
+                    balances[toAccount] = this.getBalance(toAccount) + amount;
                     lock.unlock();
                 }
+                break;
             }
+
             return true;
         } else {
             return false;
         }
+
     }
 }
 
@@ -65,8 +70,6 @@ class Accountant extends Thread {
     public void run() {
         Random rng = ThreadLocalRandom.current();
         for (int i = 0; i < 1000; ++i) {
-// Try to transfer a random amount between a pair of accounts
-// The accounts numbers (ids) are also selected randomly
             int fromAccount = rng.nextInt(Bank.N - 1);
             int toAccount = rng.nextInt(Bank.N - 1);
             while (toAccount == fromAccount) { // Source should differ from
@@ -79,8 +82,11 @@ class Accountant extends Thread {
 }
 
 public class Exercise2 {
+
+
     public static void main(String[] args) throws InterruptedException {
         Bank bank = new Bank();
+
         for (int i = 0; i < Bank.N; ++i) {
             bank.deposit(i, 100);
         }
